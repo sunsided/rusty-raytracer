@@ -48,7 +48,7 @@ fn main() -> std::io::Result<()> {
     const ASPECT_RATIO: f64 = 16.0 / 9.0;
     const IMAGE_WIDTH: usize = 400;
     const IMAGE_HEIGHT: usize = (IMAGE_WIDTH as f64 / ASPECT_RATIO) as usize;
-    const SAMPLES_PER_PIXEL: usize = 100;
+    const SAMPLES_PER_PIXEL: usize = 1000;
     const MAX_RAY_DEPTH: usize = 100;
     const GAMMA: f64 = 1.8;
 
@@ -76,6 +76,11 @@ fn main() -> std::io::Result<()> {
     world.add(Box::new(Sphere::new(
         Point3::new(-1., 0., -1.),
         0.5,
+        material_left.clone(),
+    )));
+    world.add(Box::new(Sphere::new(
+        Point3::new(-1., 0., -1.),
+        -0.4, // make a hollow glass sphere; the negative radius flips the normals!
         material_left,
     )));
     world.add(Box::new(Sphere::new(
