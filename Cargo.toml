@@ -7,6 +7,10 @@ edition = "2018"
 name = "ppm"
 path = "examples/ppm.rs"
 
+[profile.release]
+opt-level = 3
+lto = "thin"
+
 [dependencies]
 indicatif = "0.16.2"
 num-traits = "0.2.14"

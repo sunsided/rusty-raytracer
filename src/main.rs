@@ -113,7 +113,7 @@ fn main() -> std::io::Result<()> {
 
     // Set up the image.
     const ASPECT_RATIO: f64 = 3.0 / 2.0;
-    const IMAGE_WIDTH: usize = 400;
+    const IMAGE_WIDTH: usize = 1200;
     const IMAGE_HEIGHT: usize = (IMAGE_WIDTH as f64 / ASPECT_RATIO) as usize;
     const SAMPLES_PER_PIXEL: usize = 500;
     const MAX_RAY_DEPTH: usize = 50;
@@ -143,7 +143,9 @@ fn main() -> std::io::Result<()> {
     let bar = ProgressBar::new(IMAGE_HEIGHT as _);
     bar.set_style(
         ProgressStyle::default_bar()
-            .template("[{elapsed_precise}] {bar:40.cyan/blue} {pos:>7}/{len:7} {msg}")
+            .template(
+                "[{elapsed_precise} / {eta_precise}] {bar:40.cyan/blue} {pos:>7}/{len:7} {msg}",
+            )
             .progress_chars("##-"),
     );
 

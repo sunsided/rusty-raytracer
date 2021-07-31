@@ -1,5 +1,4 @@
 use crate::{Material, Point3, Ray, Vec3};
-use std::cell::Cell;
 use std::sync::Arc;
 
 pub struct HitRecord {
@@ -12,7 +11,7 @@ pub struct HitRecord {
     /// The normal of the surface at the hit point.
     pub normal: Vec3,
 
-    /// Indicates whether the normals is facing outward (along the ray) if `true`,
+    /// Indicates whether the normal is facing outward (along the ray) if `true`,
     /// or inside (against the ray) if `false`.
     ///
     /// Doing it like this instead of just observing the dot product

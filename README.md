@@ -1,6 +1,6 @@
-# A Rusty Raytracer (WIP)
+# A Rusty Raytracer
 
-A Rust implementation of the [Ray Tracing in one Weekend] tutorial.
+A Rust implementation of the [Ray Tracing in one Weekend] book / tutorial.
 
 ![](docs/snapshot.jpg)
 
