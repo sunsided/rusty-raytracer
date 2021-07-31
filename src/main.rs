@@ -18,7 +18,7 @@ pub use ray::Ray;
 pub use sphere::Sphere;
 pub use vec3::Vec3;
 
-use crate::material::{Lambertian, MaterialPtr, Metal};
+use crate::material::{Dielectric, Lambertian, MaterialPtr, Metal};
 use indicatif::{ProgressBar, ProgressStyle};
 use num_traits::Float;
 use std::fs::File;
@@ -56,10 +56,10 @@ fn main() -> std::io::Result<()> {
     let material_ground: MaterialPtr =
         Arc::new(Box::new(Lambertian::new(Color::new(0.8, 0.8, 0.0), 1.0)));
     let material_center: MaterialPtr =
-        Arc::new(Box::new(Lambertian::new(Color::new(0.7, 0.3, 0.3), 1.0)));
-    let material_left: MaterialPtr = Arc::new(Box::new(Metal::new(Color::new(0.8, 0.8, 0.8), 0.3)));
+        Arc::new(Box::new(Lambertian::new(Color::new(0.1, 0.2, 0.5), 1.0)));
+    let material_left: MaterialPtr = Arc::new(Box::new(Dielectric::new(1.5)));
     let material_right: MaterialPtr =
-        Arc::new(Box::new(Metal::new(Color::new(0.8, 0.6, 0.2), 1.0)));
+        Arc::new(Box::new(Metal::new(Color::new(0.8, 0.6, 0.2), 0.0)));
 
     // Set up the world.
     let mut world = HittableList::default();

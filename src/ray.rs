@@ -9,7 +9,10 @@ pub struct Ray {
 
 impl Ray {
     pub fn new(origin: Point3, direction: Vec3) -> Self {
-        Self { origin, direction }
+        Self {
+            origin,
+            direction: direction.as_unit_vector(),
+        }
     }
 
     /// Linearly interpolates the point that is `t` units
