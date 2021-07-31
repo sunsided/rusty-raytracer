@@ -86,6 +86,16 @@ impl Vec3 {
             }
         }
     }
+
+    /// Generates a random vector with components ranging in range `-1.0..1.0` that lies
+    /// within the hemisphere of the normal.
+    pub fn random_in_hemisphere(normal: &Vec3, rng: &mut Random) -> Self {
+        let vector = Self::random_in_unit_sphere(rng);
+        if vector.dot(normal) > 0. {
+            return vector;
+        }
+        return -vector;
+    }
 }
 
 impl Display for Vec3 {
