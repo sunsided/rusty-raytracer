@@ -1,3 +1,4 @@
+mod camera;
 mod color;
 mod hittable;
 mod point3;
@@ -5,6 +6,7 @@ mod ray;
 mod sphere;
 mod vec3;
 
+pub use camera::Camera;
 pub use color::Color;
 pub use hittable::{HitRecord, Hittable, HittableList};
 pub use point3::Point3;
@@ -43,15 +45,7 @@ fn main() -> std::io::Result<()> {
     let world: Box<dyn Hittable> = Box::new(world);
 
     // Set up the camera.
-    const VIEWPORT_HEIGHT: f64 = 2.0;
-    const VIEWPORT_WIDTH: f64 = ASPECT_RATIO * VIEWPORT_HEIGHT;
-    const FOCAL_LENGTH: f64 = 1.0;
-
-    let origin: Point3 = Point3::default();
-    let horizontal = Vec3::new(VIEWPORT_WIDTH as _, 0., 0.);
-    let vertical = Vec3::new(0., VIEWPORT_HEIGHT as _, 0.);
-    let lower_left_corner =
-        origin - horizontal.half() - vertical.half() - Vec3::new(0., 0., FOCAL_LENGTH);
+    let camera = Camera::default();
 
     // Prepare progress bar.
     let bar = ProgressBar::new(IMAGE_HEIGHT as _);
@@ -71,10 +65,7 @@ fn main() -> std::io::Result<()> {
             let u = (i as f64) / (IMAGE_WIDTH as f64 - 1.);
             let v = (j as f64) / (IMAGE_HEIGHT as f64 - 1.);
 
-            let r = Ray::new(
-                origin,
-                lower_left_corner + u * horizontal + v * vertical - origin,
-            );
+            let r = camera.get_ray(u, v);
 
             let color: Color = ray_color(&r, &world);
             write!(file, "{}", color.write_color())?;
