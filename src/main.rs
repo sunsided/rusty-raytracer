@@ -48,8 +48,8 @@ fn main() -> std::io::Result<()> {
     const ASPECT_RATIO: f64 = 16.0 / 9.0;
     const IMAGE_WIDTH: usize = 400;
     const IMAGE_HEIGHT: usize = (IMAGE_WIDTH as f64 / ASPECT_RATIO) as usize;
-    const SAMPLES_PER_PIXEL: usize = 32;
-    const MAX_RAY_DEPTH: usize = 50;
+    const SAMPLES_PER_PIXEL: usize = 100;
+    const MAX_RAY_DEPTH: usize = 100;
     const GAMMA: f64 = 1.8;
 
     // Set up the materials.
@@ -57,8 +57,9 @@ fn main() -> std::io::Result<()> {
         Arc::new(Box::new(Lambertian::new(Color::new(0.8, 0.8, 0.0), 1.0)));
     let material_center: MaterialPtr =
         Arc::new(Box::new(Lambertian::new(Color::new(0.7, 0.3, 0.3), 1.0)));
-    let material_left: MaterialPtr = Arc::new(Box::new(Metal::new(Color::new(0.8, 0.8, 0.8))));
-    let material_right: MaterialPtr = Arc::new(Box::new(Metal::new(Color::new(0.8, 0.6, 0.2))));
+    let material_left: MaterialPtr = Arc::new(Box::new(Metal::new(Color::new(0.8, 0.8, 0.8), 0.3)));
+    let material_right: MaterialPtr =
+        Arc::new(Box::new(Metal::new(Color::new(0.8, 0.6, 0.2), 1.0)));
 
     // Set up the world.
     let mut world = HittableList::default();
