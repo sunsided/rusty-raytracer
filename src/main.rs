@@ -51,7 +51,8 @@ fn main() -> std::io::Result<()> {
     const IMAGE_WIDTH: usize = 400;
     const IMAGE_HEIGHT: usize = (IMAGE_WIDTH as f64 / ASPECT_RATIO) as usize;
     const SAMPLES_PER_PIXEL: usize = 32;
-    const MAX_RAY_DEPTH: usize = 10;
+    const MAX_RAY_DEPTH: usize = 50;
+    const GAMMA: f64 = 2.2;
 
     // Set up the world.
     let mut world = HittableList::default();
@@ -92,7 +93,11 @@ fn main() -> std::io::Result<()> {
                 pixel_color += ray_color(&r, &world, &mut rng, MAX_RAY_DEPTH);
             }
 
-            write!(file, "{}", pixel_color.write_color(SAMPLES_PER_PIXEL))?;
+            write!(
+                file,
+                "{}",
+                pixel_color.write_color(SAMPLES_PER_PIXEL, GAMMA)
+            )?;
         }
     }
 
