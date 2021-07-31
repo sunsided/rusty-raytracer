@@ -1,4 +1,5 @@
 use crate::{Material, Point3, Ray, Vec3};
+use std::cell::Cell;
 use std::sync::Arc;
 
 pub struct HitRecord {
@@ -46,13 +47,13 @@ impl HitRecord {
     }
 }
 
-pub trait Hittable {
+pub trait Hittable: Send + Sync {
     fn hit(&self, r: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord>;
 }
 
 #[derive(Default)]
 pub struct HittableList {
-    pub objects: Vec<Arc<Box<dyn Hittable>>>,
+    objects: Vec<Arc<Box<dyn Hittable>>>,
 }
 
 impl HittableList {

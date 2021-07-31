@@ -15,6 +15,6 @@ pub struct ScatteredRay {
     pub attenuation: Color,
 }
 
-pub trait Material {
-    fn scatter(&self, ray: &Ray, hit: &HitRecord, rng: &mut Random) -> Option<ScatteredRay>;
+pub trait Material: Send + Sync {
+    fn scatter(&self, ray: &Ray, hit: &HitRecord, rng: &Random) -> Option<ScatteredRay>;
 }

@@ -16,7 +16,7 @@ impl Lambertian {
 }
 
 impl Material for Lambertian {
-    fn scatter(&self, _ray: &Ray, hit: &HitRecord, rng: &mut Random) -> Option<ScatteredRay> {
+    fn scatter(&self, _ray: &Ray, hit: &HitRecord, rng: &Random) -> Option<ScatteredRay> {
         let p = rng.sample();
         if p > self.scatter_probability {
             return None;

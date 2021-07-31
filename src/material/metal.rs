@@ -16,7 +16,7 @@ impl Metal {
 }
 
 impl Material for Metal {
-    fn scatter(&self, ray: &Ray, hit: &HitRecord, rng: &mut Random) -> Option<ScatteredRay> {
+    fn scatter(&self, ray: &Ray, hit: &HitRecord, rng: &Random) -> Option<ScatteredRay> {
         let reflected = ray.direction.as_unit_vector().reflect(&hit.normal);
         let scattered = Ray::new(
             hit.point,

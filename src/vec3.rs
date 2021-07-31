@@ -64,7 +64,7 @@ impl Vec3 {
     }
 
     /// Generates a random vector with components ranging in range `-1.0..1.0`.
-    pub fn random(rng: &mut Random) -> Self {
+    pub fn random(rng: &Random) -> Self {
         let x = rng.sample().mul_add(2., -1.);
         let y = rng.sample().mul_add(2., -1.);
         let z = rng.sample().mul_add(2., -1.);
@@ -72,13 +72,13 @@ impl Vec3 {
     }
 
     /// Generates a random unit vector.
-    pub fn random_unit(rng: &mut Random) -> Self {
+    pub fn random_unit(rng: &Random) -> Self {
         Self::random_in_unit_sphere(rng).as_unit_vector()
     }
 
     /// Generates a random vector with components ranging in range `-1.0..1.0` that lies
     /// within the unit sphere.
-    pub fn random_in_unit_sphere(rng: &mut Random) -> Self {
+    pub fn random_in_unit_sphere(rng: &Random) -> Self {
         loop {
             let p = Self::random(rng);
             if p.len_squared() <= 1. {
@@ -97,7 +97,7 @@ impl Vec3 {
         return -vector;
     }
 
-    pub fn random_in_unit_disk(rng: &mut Random) -> Vec3 {
+    pub fn random_in_unit_disk(rng: &Random) -> Vec3 {
         loop {
             let x = rng.sample() * 2. - 1.;
             let y = rng.sample() * 2. - 1.;

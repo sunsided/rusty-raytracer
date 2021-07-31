@@ -1,32 +1,31 @@
 mod camera;
 mod color;
-mod hittable;
 mod material;
+mod objects;
 mod point3;
 mod random;
 mod ray;
-mod sphere;
 mod vec3;
 
 use camera::Camera;
 use color::Color;
-use hittable::{HitRecord, Hittable, HittableList};
 use material::{Dielectric, Lambertian, Material, MaterialPtr, Metal};
+use objects::{HitRecord, Hittable, HittableList, Sphere};
 use point3::Point3;
 use random::Random;
 use ray::Ray;
-use sphere::Sphere;
 use vec3::Vec3;
 
 use indicatif::{ProgressBar, ProgressStyle};
 use num_traits::Float;
+use rayon::prelude::*;
 use std::fs::File;
 use std::io::prelude::*;
 use std::sync::Arc;
 
 pub struct Degrees(pub f64);
 
-fn ray_color(ray: &Ray, world: &Box<dyn Hittable>, rng: &mut Random, depth: usize) -> Color {
+fn ray_color(ray: &Ray, world: &Box<dyn Hittable>, rng: &Random, depth: usize) -> Color {
     if depth <= 0 {
         return Color::default();
     }
@@ -155,17 +154,19 @@ fn main() -> std::io::Result<()> {
     for j in (0..IMAGE_HEIGHT).rev() {
         bar.inc(1);
         for i in 0..IMAGE_WIDTH {
-            let mut pixel_color = Color::default();
-            for _ in 0..SAMPLES_PER_PIXEL {
-                let u_rnd = rng.sample();
-                let v_rnd = rng.sample();
+            let mut pixel_color = (0..SAMPLES_PER_PIXEL)
+                .into_par_iter()
+                .fold(Color::default, |sum, _idx| {
+                    let u_rnd = rng.sample();
+                    let v_rnd = rng.sample();
 
-                let u = (i as f64 + u_rnd) / (IMAGE_WIDTH as f64 - 1.);
-                let v = (j as f64 + v_rnd) / (IMAGE_HEIGHT as f64 - 1.);
+                    let u = (i as f64 + u_rnd) / (IMAGE_WIDTH as f64 - 1.);
+                    let v = (j as f64 + v_rnd) / (IMAGE_HEIGHT as f64 - 1.);
 
-                let r = camera.get_ray(u, v, &mut rng);
-                pixel_color += ray_color(&r, &world, &mut rng, MAX_RAY_DEPTH);
-            }
+                    let r = camera.get_ray(u, v, &rng);
+                    sum + ray_color(&r, &world, &rng, MAX_RAY_DEPTH)
+                })
+                .reduce(Color::default, |sum, next| sum + next);
 
             write!(
                 file,

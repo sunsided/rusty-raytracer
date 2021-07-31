@@ -56,7 +56,7 @@ impl Camera {
         }
     }
 
-    pub fn get_ray(&self, s: f64, t: f64, rng: &mut Random) -> Ray {
+    pub fn get_ray(&self, s: f64, t: f64, rng: &Random) -> Ray {
         let rd = self.lens_radius * Vec3::random_in_unit_disk(rng);
         let offset = self.u * rd.x() + self.v * rd.y();
 

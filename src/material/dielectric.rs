@@ -21,7 +21,7 @@ impl Dielectric {
 }
 
 impl Material for Dielectric {
-    fn scatter(&self, ray: &Ray, hit: &HitRecord, rng: &mut Random) -> Option<ScatteredRay> {
+    fn scatter(&self, ray: &Ray, hit: &HitRecord, rng: &Random) -> Option<ScatteredRay> {
         let attenuation: Color = Vec3::new(1., 1., 1.);
         let refraction_ratio = if hit.is_front_facing {
             1. / self.ir
