@@ -45,11 +45,11 @@ impl Vec3 {
     }
 
     #[inline]
-    pub fn cross(u: &Vec3, v: &Vec3) -> Self {
+    pub fn cross(&self, v: &Vec3) -> Self {
         Self::new(
-            u.e[1] * v.e[2] - u.e[2] * v.e[1],
-            u.e[2] * v.e[0] - u.e[0] * v.e[2],
-            u.e[0] * v.e[1] - u.e[1] * v.e[0],
+            self.e[1] * v.e[2] - self.e[2] * v.e[1],
+            self.e[2] * v.e[0] - self.e[0] * v.e[2],
+            self.e[0] * v.e[1] - self.e[1] * v.e[0],
         )
     }
 
@@ -356,12 +356,12 @@ pub mod test {
     pub fn cross_works() {
         let lhs = Vec3::new(3., -3., 1.);
         let rhs = Vec3::new(4., 9., 2.);
-        let vec = Vec3::cross(&lhs, &rhs);
+        let vec = lhs.cross(&rhs);
         assert_eq!(vec.e, [-15., -2., 39.]);
 
         let lhs = Vec3::new(3., -3., 1.);
         let rhs = Vec3::new(-12., 12., -4.);
-        let vec = Vec3::cross(&lhs, &rhs);
+        let vec = lhs.cross(&rhs);
         assert_eq!(vec.e, [0., 0., 0.]);
     }
 }

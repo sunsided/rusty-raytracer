@@ -8,23 +8,23 @@ mod ray;
 mod sphere;
 mod vec3;
 
-pub use camera::Camera;
-pub use color::Color;
-pub use hittable::{HitRecord, Hittable, HittableList};
-pub use material::Material;
-pub use point3::Point3;
-pub use random::Random;
-pub use ray::Ray;
-pub use sphere::Sphere;
-pub use vec3::Vec3;
+use camera::Camera;
+use color::Color;
+use hittable::{HitRecord, Hittable, HittableList};
+use material::{Dielectric, Lambertian, Material, MaterialPtr, Metal};
+use point3::Point3;
+use random::Random;
+use ray::Ray;
+use sphere::Sphere;
+use vec3::Vec3;
 
-use crate::camera::Degrees;
-use crate::material::{Dielectric, Lambertian, MaterialPtr, Metal};
 use indicatif::{ProgressBar, ProgressStyle};
 use num_traits::{Float, FloatConst};
 use std::fs::File;
 use std::io::prelude::*;
 use std::sync::Arc;
+
+pub struct Degrees(pub f64);
 
 fn ray_color(ray: &Ray, world: &Box<dyn Hittable>, rng: &mut Random, depth: usize) -> Color {
     if depth <= 0 {
@@ -49,35 +49,57 @@ fn main() -> std::io::Result<()> {
     const ASPECT_RATIO: f64 = 16.0 / 9.0;
     const IMAGE_WIDTH: usize = 400;
     const IMAGE_HEIGHT: usize = (IMAGE_WIDTH as f64 / ASPECT_RATIO) as usize;
-    const SAMPLES_PER_PIXEL: usize = 100;
+    const SAMPLES_PER_PIXEL: usize = 1000;
     const MAX_RAY_DEPTH: usize = 100;
     const GAMMA: f64 = 1.8;
 
     // Set up the materials.
-    let material_left: MaterialPtr =
-        Arc::new(Box::new(Lambertian::new(Color::new(0., 0., 1.), 1.)));
+    let material_ground: MaterialPtr =
+        Arc::new(Box::new(Lambertian::new(Color::new(0.8, 0.8, 0.0), 1.0)));
+    let material_center: MaterialPtr =
+        Arc::new(Box::new(Lambertian::new(Color::new(0.1, 0.2, 0.5), 1.0)));
+    let material_left: MaterialPtr = Arc::new(Box::new(Dielectric::new(1.5)));
     let material_right: MaterialPtr =
-        Arc::new(Box::new(Lambertian::new(Color::new(1., 0., 0.), 1.0)));
+        Arc::new(Box::new(Metal::new(Color::new(0.8, 0.6, 0.2), 0.0)));
 
     // Set up the world.
-    let r = (f64::PI() / 4.).cos();
-
     let mut world = HittableList::default();
     world.add(Box::new(Sphere::new(
-        Point3::new(-r, 0., -1.),
-        r,
+        Point3::new(0., -100.5, -1.),
+        100.,
+        material_ground,
+    )));
+    world.add(Box::new(Sphere::new(
+        Point3::new(0., 0., -1.),
+        0.5,
+        material_center,
+    )));
+    world.add(Box::new(Sphere::new(
+        Point3::new(-1., 0., -1.),
+        0.5,
         material_left.clone(),
     )));
     world.add(Box::new(Sphere::new(
-        Point3::new(r, 0., -1.),
-        r,
+        Point3::new(-1., 0., -1.),
+        -0.4, // make a hollow glass sphere; the negative radius flips the normals!
+        material_left,
+    )));
+    world.add(Box::new(Sphere::new(
+        Point3::new(1., 0., -1.),
+        0.5,
         material_right,
     )));
 
     let world: Box<dyn Hittable> = Box::new(world);
 
     // Set up the camera.
-    let camera = Camera::new(Degrees(90.), ASPECT_RATIO);
+    let camera = Camera::new(
+        Point3::new(-2., 2., 1.),
+        Point3::new(0., 0., -1.),
+        Vec3::new(0., 1., 0.),
+        Degrees(20.),
+        ASPECT_RATIO,
+    );
 
     // Prepare progress bar.
     let bar = ProgressBar::new(IMAGE_HEIGHT as _);
