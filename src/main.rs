@@ -153,21 +153,26 @@ fn main() -> std::io::Result<()> {
 
     for j in (0..IMAGE_HEIGHT).rev() {
         bar.inc(1);
-        for i in 0..IMAGE_WIDTH {
-            let mut pixel_color = (0..SAMPLES_PER_PIXEL)
-                .into_par_iter()
-                .fold(Color::default, |sum, _idx| {
-                    let u_rnd = rng.sample();
-                    let v_rnd = rng.sample();
 
-                    let u = (i as f64 + u_rnd) / (IMAGE_WIDTH as f64 - 1.);
-                    let v = (j as f64 + v_rnd) / (IMAGE_HEIGHT as f64 - 1.);
+        for pixel_color in (0..IMAGE_WIDTH)
+            .into_par_iter()
+            .map(|i| {
+                (0..SAMPLES_PER_PIXEL)
+                    .into_par_iter()
+                    .fold(Color::default, |sum, _idx| {
+                        let u_rnd = rng.sample();
+                        let v_rnd = rng.sample();
 
-                    let r = camera.get_ray(u, v, &rng);
-                    sum + ray_color(&r, &world, &rng, MAX_RAY_DEPTH)
-                })
-                .reduce(Color::default, |sum, next| sum + next);
+                        let u = (i as f64 + u_rnd) / (IMAGE_WIDTH as f64 - 1.);
+                        let v = (j as f64 + v_rnd) / (IMAGE_HEIGHT as f64 - 1.);
 
+                        let r = camera.get_ray(u, v, &rng);
+                        sum + ray_color(&r, &world, &rng, MAX_RAY_DEPTH)
+                    })
+                    .reduce(Color::default, |sum, next| sum + next)
+            })
+            .collect::<Vec<Color>>()
+        {
             write!(
                 file,
                 "{}",
