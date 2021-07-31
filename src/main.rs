@@ -12,8 +12,23 @@ use indicatif::{ProgressBar, ProgressStyle};
 use std::fs::File;
 use std::io::prelude::*;
 
-/// A simple gradient function for the background.
+fn hit_sphere(center: &Point3, radius: f64, r: &Ray) -> bool {
+    let oc = r.origin - *center;
+    let a = Vec3::dot(&r.direction, &r.direction);
+    let b = 2. * Vec3::dot(&oc, &r.direction);
+    let c = Vec3::dot(&oc, &oc) - radius * radius;
+    let discriminant = b * b - 4. * a * c;
+    discriminant > 0.
+}
+
 fn ray_color(r: &Ray) -> Color {
+    // TODO: Hard-coded for testing purposes.
+    if hit_sphere(&Point3::new(0., 0., -1.), 0.5, r) {
+        return Color::new(1., 0., 0.);
+    }
+
+    /// A simple gradient function for the background.
+    /// The color is blended between blue and white depending on the ray's Y coordinate.
     let unit_direction = r.direction.as_unit_vector();
     let t = 0.5 * unit_direction.y() + 1.0;
     (1.0 - t) * Color::new(1., 1., 1.) + t * Color::new(0.5, 0.7, 1.0)
