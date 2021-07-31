@@ -16,7 +16,9 @@ fn main() -> std::io::Result<()> {
     writeln!(file, "255")?;
     writeln!(file, "# Color triplets")?;
 
-    let mut bar = ProgressBar::new(IMAGE_HEIGHT as _);
+    let lol = Vec3::default();
+
+    let bar = ProgressBar::new(IMAGE_HEIGHT as _);
     bar.set_style(
         ProgressStyle::default_bar()
             .template("[{elapsed_precise}] {bar:40.cyan/blue} {pos:>7}/{len:7} {msg}")
@@ -26,6 +28,7 @@ fn main() -> std::io::Result<()> {
     for j in (0..IMAGE_HEIGHT).rev() {
         bar.inc(1);
         for i in 0..IMAGE_WIDTH {
+            //let color = Color::
             let r = (i as f64) / (IMAGE_WIDTH - 1) as f64;
             let g = (j as f64) / (IMAGE_HEIGHT - 1) as f64;
             let b = 0.25;
