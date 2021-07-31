@@ -21,9 +21,21 @@ use num_traits::Float;
 use std::fs::File;
 use std::io::prelude::*;
 
-fn ray_color(r: &Ray, world: &Box<dyn Hittable>) -> Color {
+fn ray_color(r: &Ray, world: &Box<dyn Hittable>, rng: &mut Random, depth: usize) -> Color {
+    if depth <= 0 {
+        return Color::default();
+    }
+
     if let Some(hit) = world.hit(r, 0., f64::infinity()) {
-        return 0.5 * (hit.normal + Color::new(1., 1., 1.));
+        let target = hit.point + hit.normal + Vec3::random_in_unit_sphere(rng);
+
+        return 0.5
+            * ray_color(
+                &Ray::new(hit.point, target - hit.point),
+                world,
+                rng,
+                depth - 1,
+            );
     }
 
     // A simple gradient function for the background.
@@ -39,6 +51,7 @@ fn main() -> std::io::Result<()> {
     const IMAGE_WIDTH: usize = 400;
     const IMAGE_HEIGHT: usize = (IMAGE_WIDTH as f64 / ASPECT_RATIO) as usize;
     const SAMPLES_PER_PIXEL: usize = 32;
+    const MAX_RAY_DEPTH: usize = 10;
 
     // Set up the world.
     let mut world = HittableList::default();
@@ -76,7 +89,7 @@ fn main() -> std::io::Result<()> {
                 let v = (j as f64 + v_rnd) / (IMAGE_HEIGHT as f64 - 1.);
 
                 let r = camera.get_ray(u, v);
-                pixel_color += ray_color(&r, &world);
+                pixel_color += ray_color(&r, &world, &mut rng, MAX_RAY_DEPTH);
             }
 
             write!(file, "{}", pixel_color.write_color(SAMPLES_PER_PIXEL))?;

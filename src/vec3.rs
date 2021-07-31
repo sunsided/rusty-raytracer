@@ -1,3 +1,4 @@
+use crate::Random;
 use std::fmt::{Debug, Display, Formatter};
 use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub};
 
@@ -60,6 +61,25 @@ impl Vec3 {
     #[inline]
     pub fn half(&self) -> Self {
         Vec3::new(self.e[0] * 0.5, self.e[1] * 0.5, self.e[2] * 0.5)
+    }
+
+    /// Generates a random vector with components ranging in range `-1.0..1.0`.
+    pub fn random(rng: &mut Random) -> Self {
+        let x = rng.sample().mul_add(2., -1.);
+        let y = rng.sample().mul_add(2., -1.);
+        let z = rng.sample().mul_add(2., -1.);
+        Self::new(x, y, z)
+    }
+
+    /// Generates a random vector with components ranging in range `-1.0..1.0` that lies
+    /// within the unit sphere.
+    pub fn random_in_unit_sphere(rng: &mut Random) -> Self {
+        loop {
+            let p = Self::random(rng);
+            if p.len_squared() <= 1. {
+                return p;
+            }
+        }
     }
 }
 
