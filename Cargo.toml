@@ -1,0 +1,11 @@
+[package]
+name = "raytracing"
+version = "0.1.0"
+edition = "2018"
+
+[[example]]
+name = "ppm"
+path = "examples/ppm.rs"
+
+[dependencies]
+indicatif = "0.16.2"
