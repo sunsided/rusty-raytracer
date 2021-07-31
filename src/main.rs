@@ -2,6 +2,7 @@ mod camera;
 mod color;
 mod hittable;
 mod point3;
+mod random;
 mod ray;
 mod sphere;
 mod vec3;
@@ -10,13 +11,13 @@ pub use camera::Camera;
 pub use color::Color;
 pub use hittable::{HitRecord, Hittable, HittableList};
 pub use point3::Point3;
+pub use random::Random;
 pub use ray::Ray;
 pub use sphere::Sphere;
 pub use vec3::Vec3;
 
 use indicatif::{ProgressBar, ProgressStyle};
 use num_traits::Float;
-use rand::{distributions::Uniform, prelude::*, thread_rng};
 use std::fs::File;
 use std::io::prelude::*;
 
@@ -61,16 +62,15 @@ fn main() -> std::io::Result<()> {
     let mut file = File::create("test.ppm")?;
     writeln!(file, "P3\n{} {}\n255\n", IMAGE_WIDTH, IMAGE_HEIGHT)?;
 
-    let mut rng = thread_rng();
-    let die = Uniform::from(0.0..1.0);
+    let mut rng = Random::default();
 
     for j in (0..IMAGE_HEIGHT).rev() {
         bar.inc(1);
         for i in 0..IMAGE_WIDTH {
             let mut pixel_color = Color::default();
             for _ in 0..SAMPLES_PER_PIXEL {
-                let u_rnd = die.sample(&mut rng);
-                let v_rnd = die.sample(&mut rng);
+                let u_rnd = rng.sample();
+                let v_rnd = rng.sample();
 
                 let u = (i as f64 + u_rnd) / (IMAGE_WIDTH as f64 - 1.);
                 let v = (j as f64 + v_rnd) / (IMAGE_HEIGHT as f64 - 1.);
