@@ -1,20 +1,16 @@
 mod camera;
-mod color;
 mod material;
 mod objects;
-mod point3;
+mod primitives;
 mod random;
-mod ray;
-mod vec3;
 
 use camera::Camera;
-use color::Color;
+
 use material::{Dielectric, Lambertian, Material, MaterialPtr, Metal};
 use objects::{HitRecord, Hittable, HittableList, Sphere};
-use point3::Point3;
+use primitives::{Color, Point3, Ray, Vec3};
+
 use random::Random;
-use ray::Ray;
-use vec3::Vec3;
 
 use indicatif::{ProgressBar, ProgressStyle};
 use num_traits::Float;
