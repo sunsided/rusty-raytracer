@@ -1,38 +1,25 @@
 mod color;
+mod hittable;
 mod point3;
 mod ray;
+mod sphere;
 mod vec3;
 
 pub use color::Color;
+pub use hittable::{HitRecord, Hittable, HittableList};
 pub use point3::Point3;
 pub use ray::Ray;
+pub use sphere::Sphere;
 pub use vec3::Vec3;
 
 use indicatif::{ProgressBar, ProgressStyle};
+use num_traits::Float;
 use std::fs::File;
 use std::io::prelude::*;
 
-fn hit_sphere(center: &Point3, radius: f64, r: &Ray) -> f64 {
-    let oc = r.origin - *center;
-    let a = r.direction.len_squared();
-    let half_b = oc.dot(&r.direction);
-    let c = oc.len_squared() - radius * radius;
-    let discriminant = half_b * half_b - a * c;
-    if discriminant < 0. {
-        // Indicate no hit.
-        -1.
-    } else {
-        // Calculate the hit point along the ray.
-        (-half_b - discriminant.sqrt()) / a
-    }
-}
-
-fn ray_color(r: &Ray) -> Color {
-    // TODO: Hard-coded for testing purposes.
-    let t = hit_sphere(&Point3::new(0., 0., -1.), 0.5, r);
-    if t > 0. {
-        let n = (r.at(t) - Vec3::new(0., 0., -1.)).as_unit_vector();
-        return 0.5 * Color::new(n.x() + 1., n.y() + 1., n.z() + 1.);
+fn ray_color(r: &Ray, world: &Box<dyn Hittable>) -> Color {
+    if let Some(hit) = world.hit(r, 0., f64::infinity()) {
+        return 0.5 * (hit.normal + Color::new(1., 1., 1.));
     }
 
     // A simple gradient function for the background.
@@ -47,6 +34,13 @@ fn main() -> std::io::Result<()> {
     const ASPECT_RATIO: f64 = 16.0 / 9.0;
     const IMAGE_WIDTH: usize = 400;
     const IMAGE_HEIGHT: usize = (IMAGE_WIDTH as f64 / ASPECT_RATIO) as usize;
+
+    // Set up the world.
+    let mut world = HittableList::default();
+    world.add(Box::new(Sphere::new(Point3::new(0., 0., -1.), 0.5)));
+    world.add(Box::new(Sphere::new(Point3::new(0., -100.5, -1.), 100.)));
+
+    let world: Box<dyn Hittable> = Box::new(world);
 
     // Set up the camera.
     const VIEWPORT_HEIGHT: f64 = 2.0;
@@ -82,7 +76,7 @@ fn main() -> std::io::Result<()> {
                 lower_left_corner + u * horizontal + v * vertical - origin,
             );
 
-            let color: Color = ray_color(&r);
+            let color: Color = ray_color(&r, &world);
             write!(file, "{}", color.write_color())?;
         }
     }

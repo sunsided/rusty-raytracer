@@ -1,5 +1,5 @@
 use std::fmt::{Debug, Display, Formatter};
-use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Sub};
+use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub};
 
 #[derive(Debug, PartialEq, PartialOrd, Default, Copy, Clone)]
 #[repr(C)]
@@ -163,6 +163,14 @@ impl Div<f64> for Vec3 {
     }
 }
 
+impl Neg for Vec3 {
+    type Output = Vec3;
+
+    fn neg(self) -> Self::Output {
+        Self::new(-self.e[0], -self.e[1], -self.e[2])
+    }
+}
+
 #[cfg(test)]
 pub mod test {
     use super::*;
@@ -251,6 +259,13 @@ pub mod test {
         let lhs = Vec3::new(1., 2., 3.);
         let vec = lhs / 2.;
         assert_eq!(vec.e, [0.5, 1., 1.5]);
+    }
+
+    #[test]
+    pub fn neg_works() {
+        let lhs = Vec3::new(1., 2., 3.);
+        let vec = -lhs;
+        assert_eq!(vec.e, [-1., -2., -3.]);
     }
 
     #[test]
