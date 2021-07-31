@@ -53,8 +53,13 @@ impl Vec3 {
     }
 
     #[inline]
-    pub fn unit_vector(&self) -> Self {
+    pub fn as_unit_vector(&self) -> Self {
         *self / self.len()
+    }
+
+    #[inline]
+    pub fn half(&self) -> Self {
+        Vec3::new(self.e[0] * 0.5, self.e[1] * 0.5, self.e[2] * 0.5)
     }
 }
 
@@ -249,13 +254,19 @@ pub mod test {
     }
 
     #[test]
+    pub fn half_works() {
+        let vec = Vec3::new(1., 2., 3.).half();
+        assert_eq!(vec.e, [0.5, 1., 1.5]);
+    }
+
+    #[test]
     pub fn unit_vector_works() {
         let lhs = Vec3::new(1., 0., 0.);
-        let vec = lhs.unit_vector();
+        let vec = lhs.as_unit_vector();
         assert_eq!(vec.e, [1., 0., 0.]);
 
         let lhs = Vec3::new(12., -3., -4.);
-        let vec = lhs.unit_vector();
+        let vec = lhs.as_unit_vector();
         assert_eq!(vec.e, [12. / 13., -3. / 13., -4. / 13.]);
     }
 
