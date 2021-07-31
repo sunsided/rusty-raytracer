@@ -6,7 +6,7 @@ use std::fmt::{Display, Formatter};
 pub type Color = Vec3;
 
 impl Color {
-    pub fn write_color(&self, samples_per_pixel: usize, gamma: f64) -> ColorFormatter {
+    pub fn write_color(&self, samples_per_pixel: usize, gamma: f32) -> ColorFormatter {
         ColorFormatter {
             color: &self,
             samples_per_pixel,
@@ -19,12 +19,12 @@ impl Color {
 pub struct ColorFormatter<'a> {
     color: &'a Color,
     samples_per_pixel: usize,
-    gamma: f64,
+    gamma: f32,
 }
 
 impl<'a> Display for ColorFormatter<'a> {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        let scale = 1. / self.samples_per_pixel as f64;
+        let scale = 1. / self.samples_per_pixel as f32;
         let r = self.color.e[0] * scale;
         let g = self.color.e[1] * scale;
         let b = self.color.e[2] * scale;

@@ -3,11 +3,11 @@ use crate::{Color, HitRecord, Material, Random, Ray, Vec3};
 
 pub struct Lambertian {
     albedo: Color,
-    scatter_probability: f64,
+    scatter_probability: f32,
 }
 
 impl Lambertian {
-    pub fn new(albedo: Color, scatter_probability: f64) -> Self {
+    pub fn new(albedo: Color, scatter_probability: f32) -> Self {
         Self {
             albedo,
             scatter_probability: scatter_probability.clamp(0., 1.),

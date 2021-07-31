@@ -3,11 +3,11 @@ use crate::{Color, HitRecord, Material, Random, Ray, Vec3};
 
 pub struct Metal {
     albedo: Color,
-    fuzziness: f64,
+    fuzziness: f32,
 }
 
 impl Metal {
-    pub fn new(albedo: Color, fuzziness: f64) -> Self {
+    pub fn new(albedo: Color, fuzziness: f32) -> Self {
         Self {
             albedo,
             fuzziness: fuzziness.clamp(0., 1.),

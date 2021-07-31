@@ -23,14 +23,14 @@ use std::fs::File;
 use std::io::prelude::*;
 use std::sync::Arc;
 
-pub struct Degrees(pub f64);
+pub struct Degrees(pub f32);
 
 fn ray_color(ray: &Ray, world: &Box<dyn Hittable>, rng: &Random, depth: usize) -> Color {
     if depth <= 0 {
         return Color::default();
     }
 
-    if let Some(hit) = world.hit(ray, 0.001, f64::infinity()) {
+    if let Some(hit) = world.hit(ray, 0.001, f32::infinity()) {
         if let Some(scattered) = hit.material.scatter(ray, &hit, rng) {
             return scattered.attenuation * ray_color(&scattered.ray, world, rng, depth - 1);
         }
@@ -58,9 +58,9 @@ fn random_scene(rng: &mut Random) -> HittableList {
         for b in -11..11 {
             let choose_mat = rng.sample();
             let center = Point3::new(
-                a as f64 + 0.9 * rng.sample(),
+                a as f32 + 0.9 * rng.sample(),
                 0.2,
-                b as f64 + 0.9 * rng.sample(),
+                b as f32 + 0.9 * rng.sample(),
             );
 
             if (center - Point3::new(4., 0.2, 0.)).len() > 0.9 {
@@ -112,12 +112,12 @@ fn main() -> std::io::Result<()> {
     let mut rng = Random::default();
 
     // Set up the image.
-    const ASPECT_RATIO: f64 = 3.0 / 2.0;
+    const ASPECT_RATIO: f32 = 3.0 / 2.0;
     const IMAGE_WIDTH: usize = 1200;
-    const IMAGE_HEIGHT: usize = (IMAGE_WIDTH as f64 / ASPECT_RATIO) as usize;
+    const IMAGE_HEIGHT: usize = (IMAGE_WIDTH as f32 / ASPECT_RATIO) as usize;
     const SAMPLES_PER_PIXEL: usize = 500;
     const MAX_RAY_DEPTH: usize = 50;
-    const GAMMA: f64 = 1.8;
+    const GAMMA: f32 = 1.8;
 
     // Set up the world.
     let world: Box<dyn Hittable> = Box::new(random_scene(&mut rng));
@@ -126,7 +126,7 @@ fn main() -> std::io::Result<()> {
     const LOOK_FROM: Point3 = Point3::new(13., 2., 3.);
     const LOOK_AT: Point3 = Point3::new(0., 0., 0.);
     const VIEW_UP: Vec3 = Vec3::new(0., 1., 0.);
-    const APERTURE: f64 = 0.1;
+    const APERTURE: f32 = 0.1;
     let dist_to_focus = 10.;
 
     let camera = Camera::new(
@@ -165,8 +165,8 @@ fn main() -> std::io::Result<()> {
                         let u_rnd = rng.sample();
                         let v_rnd = rng.sample();
 
-                        let u = (i as f64 + u_rnd) / (IMAGE_WIDTH as f64 - 1.);
-                        let v = (j as f64 + v_rnd) / (IMAGE_HEIGHT as f64 - 1.);
+                        let u = (i as f32 + u_rnd) / (IMAGE_WIDTH as f32 - 1.);
+                        let v = (j as f32 + v_rnd) / (IMAGE_HEIGHT as f32 - 1.);
 
                         let r = camera.get_ray(u, v, &rng);
                         sum + ray_color(&r, &world, &rng, MAX_RAY_DEPTH)

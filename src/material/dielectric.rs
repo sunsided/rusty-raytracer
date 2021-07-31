@@ -4,15 +4,15 @@ use num_traits::Pow;
 
 pub struct Dielectric {
     /// The index of refraction.
-    ir: f64,
+    ir: f32,
 }
 
 impl Dielectric {
-    pub fn new(ir: f64) -> Self {
+    pub fn new(ir: f32) -> Self {
         Self { ir }
     }
 
-    fn reflectance(cosine: f64, ref_idx: f64) -> f64 {
+    fn reflectance(cosine: f32, ref_idx: f32) -> f32 {
         // Use Schlick's approximation for reflectance.
         let mut r0 = (1. - ref_idx) / (1. + ref_idx);
         r0 *= r0;

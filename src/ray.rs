@@ -18,7 +18,7 @@ impl Ray {
     /// Linearly interpolates the point that is `t` units
     /// away from the ray's origin, along the ray's direction.
     #[inline]
-    pub fn at(&self, t: f64) -> Point3 {
+    pub fn at(&self, t: f32) -> Point3 {
         // self.origin + t * self.direction
         self.direction.mul_add(t, self.origin)
     }

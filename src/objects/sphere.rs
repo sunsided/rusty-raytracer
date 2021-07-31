@@ -3,12 +3,12 @@ use std::sync::Arc;
 
 pub struct Sphere {
     pub center: Point3,
-    pub radius: f64,
+    pub radius: f32,
     pub material: Arc<Box<dyn Material>>,
 }
 
 impl Sphere {
-    pub fn new(center: Point3, radius: f64, material: Arc<Box<dyn Material>>) -> Self {
+    pub fn new(center: Point3, radius: f32, material: Arc<Box<dyn Material>>) -> Self {
         Self {
             center,
             radius,
@@ -18,7 +18,7 @@ impl Sphere {
 }
 
 impl Hittable for Sphere {
-    fn hit(&self, r: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord> {
+    fn hit(&self, r: &Ray, t_min: f32, t_max: f32) -> Option<HitRecord> {
         let oc = r.origin - self.center;
         let a = r.direction.len_squared();
         let half_b = oc.dot(&r.direction);

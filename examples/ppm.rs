@@ -27,8 +27,8 @@ fn main() -> std::io::Result<()> {
         bar.inc(1);
         for i in 0..IMAGE_WIDTH {
             //let color = Color::
-            let r = (i as f64) / (IMAGE_WIDTH - 1) as f64;
-            let g = (j as f64) / (IMAGE_HEIGHT - 1) as f64;
+            let r = (i as f32) / (IMAGE_WIDTH - 1) as f32;
+            let g = (j as f32) / (IMAGE_HEIGHT - 1) as f32;
             let b = 0.25;
 
             let ir = (255.299 * r) as u8;

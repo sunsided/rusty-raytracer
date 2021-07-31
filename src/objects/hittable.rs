@@ -3,7 +3,7 @@ use std::sync::Arc;
 
 pub struct HitRecord {
     /// The distance from the ray's origin at which the hit occurred.
-    pub t: f64,
+    pub t: f32,
 
     /// The hit point.
     pub point: Point3,
@@ -26,7 +26,7 @@ pub struct HitRecord {
 impl HitRecord {
     pub fn new_from_ray(
         ray: &Ray,
-        t: f64,
+        t: f32,
         p: Point3,
         outward_normal: Vec3,
         material: Arc<Box<dyn Material>>,
@@ -47,7 +47,7 @@ impl HitRecord {
 }
 
 pub trait Hittable: Send + Sync {
-    fn hit(&self, r: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord>;
+    fn hit(&self, r: &Ray, t_min: f32, t_max: f32) -> Option<HitRecord>;
 }
 
 #[derive(Default)]
@@ -67,7 +67,7 @@ impl HittableList {
 }
 
 impl Hittable for HittableList {
-    fn hit(&self, r: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord> {
+    fn hit(&self, r: &Ray, t_min: f32, t_max: f32) -> Option<HitRecord> {
         let mut best_hit = None;
         let mut closest_so_far = t_max;
 

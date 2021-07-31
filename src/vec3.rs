@@ -5,42 +5,42 @@ use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub};
 #[derive(Debug, PartialEq, PartialOrd, Default, Copy, Clone)]
 #[repr(C)]
 pub struct Vec3 {
-    pub e: [f64; 3],
+    pub e: [f32; 3],
 }
 
 impl Vec3 {
     #[inline]
-    pub const fn new(e0: f64, e1: f64, e2: f64) -> Self {
+    pub const fn new(e0: f32, e1: f32, e2: f32) -> Self {
         Self { e: [e0, e1, e2] }
     }
 
     #[inline]
-    pub fn x(&self) -> f64 {
+    pub fn x(&self) -> f32 {
         self.e[0]
     }
 
     #[inline]
-    pub fn y(&self) -> f64 {
+    pub fn y(&self) -> f32 {
         self.e[1]
     }
 
     #[inline]
-    pub fn z(&self) -> f64 {
+    pub fn z(&self) -> f32 {
         self.e[2]
     }
 
     #[inline]
-    pub fn len(&self) -> f64 {
+    pub fn len(&self) -> f32 {
         self.len_squared().sqrt()
     }
 
     #[inline]
-    pub fn len_squared(&self) -> f64 {
+    pub fn len_squared(&self) -> f32 {
         self.e[0] * self.e[0] + self.e[1] * self.e[1] + self.e[2] * self.e[2]
     }
 
     #[inline]
-    pub fn dot(&self, v: &Vec3) -> f64 {
+    pub fn dot(&self, v: &Vec3) -> f32 {
         self.e[0] * v.e[0] + self.e[1] * v.e[1] + self.e[2] * v.e[2]
     }
 
@@ -110,7 +110,7 @@ impl Vec3 {
 
     /// Determines if the vector is new zero
     pub fn near_zero(&self) -> bool {
-        const EPS: f64 = 1e-8;
+        const EPS: f32 = 1e-8;
         (self.e[0].abs() < EPS) && (self.e[1].abs() < EPS) && (self.e[2].abs() < EPS)
     }
 
@@ -119,7 +119,7 @@ impl Vec3 {
         *self - 2. * self.dot(normal) * (*normal)
     }
 
-    pub fn refract(&self, normal: &Vec3, etai_over_etat: f64) -> Vec3 {
+    pub fn refract(&self, normal: &Vec3, etai_over_etat: f32) -> Vec3 {
         let cos_theta = (-*self).dot(normal).min(1.0);
         let r_out_perp = etai_over_etat * (*self + cos_theta * (*normal));
         let r_out_parallel = -((1.0 - r_out_perp.len_squared()).abs()).sqrt() * (*normal);
@@ -146,11 +146,11 @@ impl Add for Vec3 {
     }
 }
 
-impl Add<f64> for Vec3 {
+impl Add<f32> for Vec3 {
     type Output = Self;
 
     #[inline]
-    fn add(self, rhs: f64) -> Self {
+    fn add(self, rhs: f32) -> Self {
         Vec3::new(self.e[0] + rhs, self.e[1] + rhs, self.e[2] + rhs)
     }
 }
@@ -177,9 +177,9 @@ impl Sub for Vec3 {
     }
 }
 
-impl MulAssign<f64> for Vec3 {
+impl MulAssign<f32> for Vec3 {
     #[inline]
-    fn mul_assign(&mut self, rhs: f64) {
+    fn mul_assign(&mut self, rhs: f32) {
         self.e[0] *= rhs;
         self.e[1] *= rhs;
         self.e[2] *= rhs;
@@ -199,16 +199,16 @@ impl Mul for Vec3 {
     }
 }
 
-impl Mul<f64> for Vec3 {
+impl Mul<f32> for Vec3 {
     type Output = Self;
 
     #[inline]
-    fn mul(self, rhs: f64) -> Self {
+    fn mul(self, rhs: f32) -> Self {
         Vec3::new(self.e[0] * rhs, self.e[1] * rhs, self.e[2] * rhs)
     }
 }
 
-impl Mul<Vec3> for f64 {
+impl Mul<Vec3> for f32 {
     type Output = Vec3;
 
     #[inline]
@@ -217,20 +217,20 @@ impl Mul<Vec3> for f64 {
     }
 }
 
-impl DivAssign<f64> for Vec3 {
+impl DivAssign<f32> for Vec3 {
     #[inline]
-    fn div_assign(&mut self, rhs: f64) {
+    fn div_assign(&mut self, rhs: f32) {
         self.e[0] /= rhs;
         self.e[1] /= rhs;
         self.e[2] /= rhs;
     }
 }
 
-impl Div<f64> for Vec3 {
+impl Div<f32> for Vec3 {
     type Output = Self;
 
     #[inline]
-    fn div(self, rhs: f64) -> Self {
+    fn div(self, rhs: f32) -> Self {
         let inv = 1. / rhs;
         Vec3::new(self.e[0] * inv, self.e[1] * inv, self.e[2] * inv)
     }
@@ -272,7 +272,7 @@ pub mod test {
     #[test]
     pub fn len_works() {
         let vec = Vec3::new(1., 2., 3.);
-        assert_eq!(vec.len(), (1f64 + 4. + 9.).sqrt());
+        assert_eq!(vec.len(), (1f32 + 4. + 9.).sqrt());
     }
 
     #[test]
