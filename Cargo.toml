@@ -9,3 +9,4 @@ path = "examples/ppm.rs"
 
 [dependencies]
 indicatif = "0.16.2"
+num-traits = "0.2.14"

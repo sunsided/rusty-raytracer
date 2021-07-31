@@ -16,8 +16,6 @@ fn main() -> std::io::Result<()> {
     writeln!(file, "255")?;
     writeln!(file, "# Color triplets")?;
 
-    let lol = Vec3::default();
-
     let bar = ProgressBar::new(IMAGE_HEIGHT as _);
     bar.set_style(
         ProgressStyle::default_bar()

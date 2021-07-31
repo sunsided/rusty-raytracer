@@ -130,6 +130,15 @@ impl Mul<f64> for Vec3 {
     }
 }
 
+impl Mul<Vec3> for f64 {
+    type Output = Vec3;
+
+    #[inline]
+    fn mul(self, rhs: Vec3) -> Vec3 {
+        rhs.mul(self)
+    }
+}
+
 impl DivAssign<f64> for Vec3 {
     #[inline]
     fn div_assign(&mut self, rhs: f64) {
@@ -218,6 +227,9 @@ pub mod test {
     pub fn mul_scalar_works() {
         let lhs = Vec3::new(1., 2., 3.);
         let vec = lhs * 2.;
+        assert_eq!(vec.e, [2., 4., 6.]);
+
+        let vec = 2. * lhs;
         assert_eq!(vec.e, [2., 4., 6.]);
     }
 
