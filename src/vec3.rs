@@ -10,7 +10,7 @@ pub struct Vec3 {
 
 impl Vec3 {
     #[inline]
-    pub fn new(e0: f64, e1: f64, e2: f64) -> Self {
+    pub const fn new(e0: f64, e1: f64, e2: f64) -> Self {
         Self { e: [e0, e1, e2] }
     }
 
@@ -95,6 +95,17 @@ impl Vec3 {
             return vector;
         }
         return -vector;
+    }
+
+    pub fn random_in_unit_disk(rng: &mut Random) -> Vec3 {
+        loop {
+            let x = rng.sample() * 2. - 1.;
+            let y = rng.sample() * 2. - 1.;
+            let p = Vec3::new(x, y, 0.);
+            if p.len_squared() < 1. {
+                return p;
+            }
+        }
     }
 
     /// Determines if the vector is new zero

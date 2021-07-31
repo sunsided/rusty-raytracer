@@ -93,12 +93,20 @@ fn main() -> std::io::Result<()> {
     let world: Box<dyn Hittable> = Box::new(world);
 
     // Set up the camera.
+    const LOOK_FROM: Point3 = Point3::new(3., 3., 2.);
+    const LOOK_AT: Point3 = Point3::new(0., 0., -1.);
+    const VIEW_UP: Vec3 = Vec3::new(0., 1., 0.);
+    const APERTURE: f64 = 2.;
+    let dist_to_focus = (LOOK_FROM - LOOK_AT).len();
+
     let camera = Camera::new(
-        Point3::new(-2., 2., 1.),
-        Point3::new(0., 0., -1.),
-        Vec3::new(0., 1., 0.),
+        LOOK_FROM,
+        LOOK_AT,
+        VIEW_UP,
         Degrees(20.),
         ASPECT_RATIO,
+        APERTURE,
+        dist_to_focus,
     );
 
     // Prepare progress bar.
@@ -126,7 +134,7 @@ fn main() -> std::io::Result<()> {
                 let u = (i as f64 + u_rnd) / (IMAGE_WIDTH as f64 - 1.);
                 let v = (j as f64 + v_rnd) / (IMAGE_HEIGHT as f64 - 1.);
 
-                let r = camera.get_ray(u, v);
+                let r = camera.get_ray(u, v, &mut rng);
                 pixel_color += ray_color(&r, &world, &mut rng, MAX_RAY_DEPTH);
             }
 
