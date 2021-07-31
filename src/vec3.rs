@@ -146,6 +146,15 @@ impl Add for Vec3 {
     }
 }
 
+impl Add<f64> for Vec3 {
+    type Output = Self;
+
+    #[inline]
+    fn add(self, rhs: f64) -> Self {
+        Vec3::new(self.e[0] + rhs, self.e[1] + rhs, self.e[2] + rhs)
+    }
+}
+
 impl AddAssign for Vec3 {
     #[inline]
     fn add_assign(&mut self, rhs: Self) {

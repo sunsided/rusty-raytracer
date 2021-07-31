@@ -56,12 +56,7 @@ pub struct HittableList {
 }
 
 impl HittableList {
-    pub fn new_from_object(object: Box<dyn Hittable>) -> Self {
-        Self {
-            objects: vec![Arc::new(object)],
-        }
-    }
-
+    #[allow(dead_code)]
     pub fn clear(&mut self) {
         self.objects.clear();
     }
