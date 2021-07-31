@@ -14,16 +14,16 @@ use std::io::prelude::*;
 
 fn hit_sphere(center: &Point3, radius: f64, r: &Ray) -> f64 {
     let oc = r.origin - *center;
-    let a = Vec3::dot(&r.direction, &r.direction);
-    let b = 2. * Vec3::dot(&oc, &r.direction);
-    let c = Vec3::dot(&oc, &oc) - radius * radius;
-    let discriminant = b * b - 4. * a * c;
+    let a = r.direction.len_squared();
+    let half_b = oc.dot(&r.direction);
+    let c = oc.len_squared() - radius * radius;
+    let discriminant = half_b * half_b - a * c;
     if discriminant < 0. {
         // Indicate no hit.
         -1.
     } else {
         // Calculate the hit point along the ray.
-        (-b - discriminant.sqrt()) / (2. * a)
+        (-half_b - discriminant.sqrt()) / a
     }
 }
 
@@ -35,8 +35,8 @@ fn ray_color(r: &Ray) -> Color {
         return 0.5 * Color::new(n.x() + 1., n.y() + 1., n.z() + 1.);
     }
 
-    /// A simple gradient function for the background.
-    /// The color is blended between blue and white depending on the ray's Y coordinate.
+    // A simple gradient function for the background.
+    // The color is blended between blue and white depending on the ray's Y coordinate.
     let unit_direction = r.direction.as_unit_vector();
     let t = 0.5 * (unit_direction.y() + 1.0);
     (1.0 - t) * Color::new(1., 1., 1.) + t * Color::new(0.5, 0.7, 1.0)
