@@ -71,6 +71,11 @@ impl Vec3 {
         Self::new(x, y, z)
     }
 
+    /// Generates a random unit vector.
+    pub fn random_unit(rng: &mut Random) -> Self {
+        Self::random_in_unit_sphere(rng).as_unit_vector()
+    }
+
     /// Generates a random vector with components ranging in range `-1.0..1.0` that lies
     /// within the unit sphere.
     pub fn random_in_unit_sphere(rng: &mut Random) -> Self {
