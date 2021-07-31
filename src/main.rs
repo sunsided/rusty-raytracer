@@ -1,6 +1,7 @@
 mod camera;
 mod color;
 mod hittable;
+mod material;
 mod point3;
 mod random;
 mod ray;
@@ -10,38 +11,34 @@ mod vec3;
 pub use camera::Camera;
 pub use color::Color;
 pub use hittable::{HitRecord, Hittable, HittableList};
+pub use material::Material;
 pub use point3::Point3;
 pub use random::Random;
 pub use ray::Ray;
 pub use sphere::Sphere;
 pub use vec3::Vec3;
 
+use crate::material::{Lambertian, MaterialPtr, Metal};
 use indicatif::{ProgressBar, ProgressStyle};
 use num_traits::Float;
 use std::fs::File;
 use std::io::prelude::*;
+use std::sync::Arc;
 
-fn ray_color(r: &Ray, world: &Box<dyn Hittable>, rng: &mut Random, depth: usize) -> Color {
+fn ray_color(ray: &Ray, world: &Box<dyn Hittable>, rng: &mut Random, depth: usize) -> Color {
     if depth <= 0 {
         return Color::default();
     }
 
-    if let Some(hit) = world.hit(r, 0.001, f64::infinity()) {
-        let target = hit.point + hit.normal + Vec3::random_unit(rng);
-        // let target = hit.point + hit.normal + Vec3::random_in_hemisphere(&hit.normal, rng);
-
-        return 0.5
-            * ray_color(
-                &Ray::new(hit.point, target - hit.point),
-                world,
-                rng,
-                depth - 1,
-            );
+    if let Some(hit) = world.hit(ray, 0.001, f64::infinity()) {
+        if let Some(scattered) = hit.material.scatter(ray, &hit, rng) {
+            return scattered.attenuation * ray_color(&scattered.ray, world, rng, depth - 1);
+        }
     }
 
     // A simple gradient function for the background.
     // The color is blended between blue and white depending on the ray's Y coordinate.
-    let unit_direction = r.direction.as_unit_vector();
+    let unit_direction = ray.direction.as_unit_vector();
     let t = 0.5 * (unit_direction.y() + 1.0);
     (1.0 - t) * Color::new(1., 1., 1.) + t * Color::new(0.5, 0.7, 1.0)
 }
@@ -53,12 +50,38 @@ fn main() -> std::io::Result<()> {
     const IMAGE_HEIGHT: usize = (IMAGE_WIDTH as f64 / ASPECT_RATIO) as usize;
     const SAMPLES_PER_PIXEL: usize = 32;
     const MAX_RAY_DEPTH: usize = 50;
-    const GAMMA: f64 = 2.2;
+    const GAMMA: f64 = 1.8;
+
+    // Set up the materials.
+    let material_ground: MaterialPtr =
+        Arc::new(Box::new(Lambertian::new(Color::new(0.8, 0.8, 0.0), 1.0)));
+    let material_center: MaterialPtr =
+        Arc::new(Box::new(Lambertian::new(Color::new(0.7, 0.3, 0.3), 1.0)));
+    let material_left: MaterialPtr = Arc::new(Box::new(Metal::new(Color::new(0.8, 0.8, 0.8))));
+    let material_right: MaterialPtr = Arc::new(Box::new(Metal::new(Color::new(0.8, 0.6, 0.2))));
 
     // Set up the world.
     let mut world = HittableList::default();
-    world.add(Box::new(Sphere::new(Point3::new(0., 0., -1.), 0.5)));
-    world.add(Box::new(Sphere::new(Point3::new(0., -100.5, -1.), 100.)));
+    world.add(Box::new(Sphere::new(
+        Point3::new(0., -100.5, -1.),
+        100.,
+        material_ground,
+    )));
+    world.add(Box::new(Sphere::new(
+        Point3::new(0., 0., -1.),
+        0.5,
+        material_center,
+    )));
+    world.add(Box::new(Sphere::new(
+        Point3::new(-1., 0., -1.),
+        0.5,
+        material_left,
+    )));
+    world.add(Box::new(Sphere::new(
+        Point3::new(1., 0., -1.),
+        0.5,
+        material_right,
+    )));
 
     let world: Box<dyn Hittable> = Box::new(world);
 

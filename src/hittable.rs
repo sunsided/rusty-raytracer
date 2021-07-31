@@ -1,4 +1,4 @@
-use crate::{Point3, Ray, Vec3};
+use crate::{Material, Point3, Ray, Vec3};
 use std::sync::Arc;
 
 pub struct HitRecord {
@@ -18,10 +18,19 @@ pub struct HitRecord {
     /// whenever needed is a question of preference, and the author of
     /// the instruction text chose to do it this way.
     pub is_front_facing: bool,
+
+    /// The material that was hit.
+    pub material: Arc<Box<dyn Material>>,
 }
 
 impl HitRecord {
-    pub fn new_from_ray(ray: &Ray, t: f64, p: Point3, outward_normal: Vec3) -> Self {
+    pub fn new_from_ray(
+        ray: &Ray,
+        t: f64,
+        p: Point3,
+        outward_normal: Vec3,
+        material: Arc<Box<dyn Material>>,
+    ) -> Self {
         let is_front_facing = ray.direction.dot(&outward_normal) < 0.;
         Self {
             t,
@@ -32,6 +41,7 @@ impl HitRecord {
             } else {
                 -outward_normal
             },
+            material,
         }
     }
 }

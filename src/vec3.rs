@@ -96,6 +96,17 @@ impl Vec3 {
         }
         return -vector;
     }
+
+    /// Determines if the vector is new zero
+    pub fn near_zero(&self) -> bool {
+        const EPS: f64 = 1e-8;
+        (self.e[0].abs() < EPS) && (self.e[1].abs() < EPS) && (self.e[2].abs() < EPS)
+    }
+
+    /// Reflects a vector along a normal.
+    pub fn reflect(&self, normal: &Vec3) -> Self {
+        *self - 2. * self.dot(normal) * (*normal)
+    }
 }
 
 impl Display for Vec3 {
@@ -217,6 +228,12 @@ pub mod test {
         assert_eq!(vec.x(), 1.);
         assert_eq!(vec.y(), 2.);
         assert_eq!(vec.z(), 3.);
+    }
+
+    #[test]
+    pub fn near_zero_works() {
+        assert!(Vec3::default().near_zero());
+        assert!(Vec3::new(1e-9, 0., 0.).near_zero());
     }
 
     #[test]

@@ -1,14 +1,19 @@
-use crate::{HitRecord, Hittable, Point3, Ray};
+use crate::{HitRecord, Hittable, Material, Point3, Ray};
+use std::sync::Arc;
 
-#[derive(Debug)]
 pub struct Sphere {
     pub center: Point3,
     pub radius: f64,
+    pub material: Arc<Box<dyn Material>>,
 }
 
 impl Sphere {
-    pub fn new(center: Point3, radius: f64) -> Self {
-        Self { center, radius }
+    pub fn new(center: Point3, radius: f64, material: Arc<Box<dyn Material>>) -> Self {
+        Self {
+            center,
+            radius,
+            material,
+        }
     }
 }
 
@@ -40,6 +45,12 @@ impl Hittable for Sphere {
 
         let hit_point = r.at(root);
         let outward_normal = (hit_point - self.center) / self.radius;
-        Some(HitRecord::new_from_ray(r, root, hit_point, outward_normal))
+        Some(HitRecord::new_from_ray(
+            r,
+            root,
+            hit_point,
+            outward_normal,
+            self.material.clone(),
+        ))
     }
 }
