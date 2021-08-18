@@ -1,4 +1,6 @@
-use crate::{Material, Point3, Ray, Vec3};
+use crate::{Material, Point3, Ray, Vec3, GRID_SCALE};
+use space_partitioning::quadtree::{QuadRect, QuadTreeElement, AABB};
+use space_partitioning::QuadTree;
 use std::sync::Arc;
 
 pub struct HitRecord {
@@ -48,11 +50,31 @@ impl HitRecord {
 
 pub trait Hittable: Send + Sync {
     fn hit(&self, r: &Ray, t_min: f32, t_max: f32) -> Option<HitRecord>;
+    fn to_aabb(&self) -> AABB;
 }
 
-#[derive(Default)]
 pub struct HittableList {
     objects: Vec<Arc<Box<dyn Hittable>>>,
+    tree_objects: QuadTree<u32>,
+    extents: AABB,
+}
+
+impl Default for HittableList {
+    fn default() -> Self {
+        Self {
+            objects: Vec::default(),
+            tree_objects: QuadTree::new(
+                QuadRect::new(
+                    (-15. * GRID_SCALE) as i32,
+                    (-15. * GRID_SCALE) as i32,
+                    (30. * GRID_SCALE) as i32,
+                    (30. * GRID_SCALE) as i32,
+                ),
+                3,
+            ),
+            extents: AABB::default(),
+        }
+    }
 }
 
 impl HittableList {
@@ -62,6 +84,13 @@ impl HittableList {
     }
 
     pub fn add(&mut self, object: Box<dyn Hittable>) {
+        let id = self.objects.len() as u32;
+        let aabb = object.to_aabb();
+        self.extents = self.extents + aabb;
+        self.tree_objects
+            .insert(QuadTreeElement::new(id, aabb))
+            .expect("insert failed");
+
         self.objects.push(Arc::new(object));
     }
 }
@@ -71,7 +100,9 @@ impl Hittable for HittableList {
         let mut best_hit = None;
         let mut closest_so_far = t_max;
 
-        for object in self.objects.iter() {
+        let candidates = self.tree_objects.intersect_generic(r);
+        for id in candidates.into_iter() {
+            let object = &self.objects[id as usize];
             if let Some(hit) = object.hit(r, t_min, closest_so_far) {
                 closest_so_far = hit.t;
                 best_hit = Some(hit);
@@ -79,5 +110,9 @@ impl Hittable for HittableList {
         }
 
         best_hit
+    }
+
+    fn to_aabb(&self) -> AABB {
+        self.extents
     }
 }

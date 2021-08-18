@@ -1,4 +1,5 @@
-use crate::{HitRecord, Hittable, Material, Point3, Ray};
+use crate::{HitRecord, Hittable, Material, Point3, Ray, GRID_SCALE};
+use space_partitioning::quadtree::AABB;
 use std::sync::Arc;
 
 pub struct Sphere {
@@ -52,5 +53,18 @@ impl Hittable for Sphere {
             outward_normal,
             self.material.clone(),
         ))
+    }
+
+    fn to_aabb(&self) -> AABB {
+        let x = self.center.x() * GRID_SCALE;
+        let z = self.center.z() * GRID_SCALE;
+        let r = self.radius * GRID_SCALE;
+
+        AABB::new(
+            (x - r).floor() as i32,
+            (z - r).floor() as i32,
+            (x + r).ceil() as i32,
+            (z + r).ceil() as i32,
+        )
     }
 }

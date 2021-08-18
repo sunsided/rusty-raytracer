@@ -19,6 +19,8 @@ use std::fs::File;
 use std::io::prelude::*;
 use std::sync::Arc;
 
+const GRID_SCALE: f32 = 10.0;
+
 pub struct Degrees(pub f32);
 
 fn ray_color(ray: &Ray, world: &Box<dyn Hittable>, rng: &Random, depth: usize) -> Color {
@@ -106,6 +108,13 @@ fn random_scene(rng: &mut Random) -> HittableList {
 
 fn main() -> std::io::Result<()> {
     let mut rng = Random::default();
+
+    /*
+    rayon::ThreadPoolBuilder::new()
+        .num_threads(1)
+        .build_global()
+        .expect("building the thread pool failed");
+    */
 
     // Set up the image.
     const ASPECT_RATIO: f32 = 3.0 / 2.0;
