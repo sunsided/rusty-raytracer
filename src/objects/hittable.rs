@@ -1,4 +1,4 @@
-use crate::{Material, Point3, Ray, Vec3, GRID_SCALE};
+use crate::{Material, Point3, Ray, Vec3};
 use space_partitioning::quadtree::{QuadRect, QuadTreeElement, AABB};
 use space_partitioning::QuadTree;
 use std::sync::Arc;
@@ -59,25 +59,15 @@ pub struct HittableList {
     extents: AABB,
 }
 
-impl Default for HittableList {
-    fn default() -> Self {
+impl HittableList {
+    pub fn new(bounds: QuadRect) -> Self {
         Self {
             objects: Vec::default(),
-            tree_objects: QuadTree::new(
-                QuadRect::new(
-                    (-15. * GRID_SCALE) as i32,
-                    (-15. * GRID_SCALE) as i32,
-                    (30. * GRID_SCALE) as i32,
-                    (30. * GRID_SCALE) as i32,
-                ),
-                3,
-            ),
+            tree_objects: QuadTree::new(bounds, 3),
             extents: AABB::default(),
         }
     }
-}
 
-impl HittableList {
     #[allow(dead_code)]
     pub fn clear(&mut self) {
         self.objects.clear();

@@ -15,6 +15,7 @@ use random::Random;
 use indicatif::{ProgressBar, ProgressStyle};
 use num_traits::Float;
 use rayon::prelude::*;
+use space_partitioning::quadtree::QuadRect;
 use std::fs::File;
 use std::io::prelude::*;
 use std::sync::Arc;
@@ -42,7 +43,12 @@ fn ray_color(ray: &Ray, world: &Box<dyn Hittable>, rng: &Random, depth: usize) -
 }
 
 fn random_scene(rng: &mut Random) -> HittableList {
-    let mut world = HittableList::default();
+    let mut world = HittableList::new(QuadRect::new(
+        (-15. * GRID_SCALE) as i32,
+        (-15. * GRID_SCALE) as i32,
+        (30. * GRID_SCALE) as i32,
+        (30. * GRID_SCALE) as i32,
+    ));
 
     let ground_material: MaterialPtr =
         Arc::new(Box::new(Lambertian::new(Color::new(0.5, 0.5, 0.5), 1.0)));
