@@ -1,6 +1,5 @@
 use crate::{Material, Point3, Ray, Vec3};
 use space_partitioning::quadtree::{QuadRect, QuadTreeElement, AABB};
-use space_partitioning::types::HashSet;
 use space_partitioning::QuadTree;
 use std::sync::Arc;
 
@@ -64,7 +63,7 @@ impl HittableList {
     pub fn new(bounds: QuadRect) -> Self {
         Self {
             objects: Vec::default(),
-            tree_objects: QuadTree::new(bounds, 3, 2, 1),
+            tree_objects: QuadTree::new(bounds, 3, 4, 1),
             extents: AABB::default(),
         }
     }
@@ -84,11 +83,6 @@ impl HittableList {
 
         self.objects.push(Arc::new(object));
     }
-
-    thread_local! {
-        /// The set of candidate matches for each ray during a hit() test.
-        static CANDIDATE_SET: std::cell::RefCell<HashSet<u32>> = std::cell::RefCell::new(HashSet::new());
-    }
 }
 
 impl Hittable for HittableList {
@@ -96,23 +90,15 @@ impl Hittable for HittableList {
         let mut best_hit = None;
         let mut closest_so_far = t_max;
 
-        HittableList::CANDIDATE_SET.with(|set| {
-            let mut candidates = set.borrow_mut();
-            self.tree_objects.intersect_generic_fn(r, |id| {
-                candidates.insert(id);
-            });
-
-            for id in candidates.iter() {
-                let object = &self.objects[*id as usize];
-                if let Some(hit) = object.hit(r, t_min, closest_so_far) {
-                    closest_so_far = hit.t;
-                    best_hit = Some(hit);
-                }
+        self.tree_objects.intersect_generic_fn(r, |id| {
+            let object = &self.objects[id as usize];
+            if let Some(hit) = object.hit(r, t_min, closest_so_far) {
+                closest_so_far = hit.t;
+                best_hit = Some(hit);
             }
+        });
 
-            candidates.clear();
-            best_hit
-        })
+        best_hit
     }
 
     fn to_aabb(&self) -> AABB {

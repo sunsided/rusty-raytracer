@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 This project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+
+### Internal
+
+- Updated to [space-partitioning](https://crates.io/crates/space-partitioning/0.5.0) `0.5.0`
+  for intersection test improvements. This update reduced
+  the rendering time for the default 1280 x 800 pixel image to 6.1 minutes on
+  an i7-6700K CPU @ 4.00GHz with 4 cores + HT.
+
 ## 0.3.0 - 2021-08-21
 
 ### Internal

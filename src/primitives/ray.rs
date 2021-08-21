@@ -3,7 +3,7 @@ use num_traits::MulAdd;
 use space_partitioning::intersections::IntersectsWith;
 use space_partitioning::quadtree::AABB;
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone)]
 pub struct Ray {
     pub origin: Point3,
     pub direction: Vec3,

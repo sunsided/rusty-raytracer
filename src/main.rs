@@ -20,7 +20,7 @@ use std::fs::File;
 use std::io::prelude::*;
 use std::sync::Arc;
 
-const GRID_SCALE: f32 = 10.0;
+const GRID_SCALE: f32 = 100.0;
 
 pub struct Degrees(pub f32);
 
