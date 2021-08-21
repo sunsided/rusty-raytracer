@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 This project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.3.0 - 2021-08-21
+
+### Internal
+
+- Updated to [space-partitioning](https://crates.io/crates/space-partitioning/0.4.0) `0.4.0`
+  for [hashbrown](https://crates.io/crates/hashbrown) sets and use of
+  callback functions for intersection candidate generation. This update reduced
+  the rendering time for the default 1280 x 800 pixel image to 7.1 minutes on
+  an i7-6700K CPU @ 4.00GHz with 4 cores + HT.
+
 ## 0.2.0 - 2021-08-18
 
 ### Added
